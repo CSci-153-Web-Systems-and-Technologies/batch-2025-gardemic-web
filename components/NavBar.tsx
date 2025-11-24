@@ -14,7 +14,7 @@ export default function NavBar() {
 
                 className="bg-white rounded-full"
                 />
-                <Link href={"/"} className="text-2xl">Gardemic</Link>
+                <Link href={"/"} className="text-2xl text-accent-white">Gardemic</Link>
             </div>
         </div>
     )
