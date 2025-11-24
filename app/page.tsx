@@ -1,5 +1,6 @@
 import NavBar from "@/components/NavBar";
 import DecisionScreen from "@/components/DecisionScreen";
+import Features from "@/components/Features";
 
 export default function Home() {
   return (
@@ -10,6 +11,10 @@ export default function Home() {
         </nav>
 
         <DecisionScreen />
+
+        <span className="mt-20"></span>
+
+        <Features />
 
       </main>
     </div>
