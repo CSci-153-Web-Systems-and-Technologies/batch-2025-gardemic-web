@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function AuthButtons() {
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 font-montserrat font-semibold text-xl">
             <Button asChild size={"lg"} variant={"default"}>
                 <Link href="/login">Sign into your Account</Link>
             </Button>
