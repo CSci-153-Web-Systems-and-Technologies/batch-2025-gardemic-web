@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Aclonica&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -12,6 +17,11 @@
 
   --color-accent-white: hsl(60, 57%, 91%);
   --color-accent-brown: hsl(25, 76%, 31%);
+
+  /* Fonts */
+  --font-aclonica: 'Aclonica', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-source-sans: 'Source Sans 3', sans-serif;
 }
 
 @theme inline {
