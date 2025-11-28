@@ -10,7 +10,7 @@ export default function AuthButtons() {
             </Button>
 
             <Button asChild size={"lg"} variant={"default"}>
-                <Link href="/sign-up">Create Account</Link>
+                <Link href="/create-account">Create Account</Link>
             </Button>
         
         </div>
