@@ -1,4 +1,6 @@
 import { Button } from "./ui/button";
+import { createClient } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
 
 export default function GoogleButton() {
     return (
@@ -6,7 +8,7 @@ export default function GoogleButton() {
           type="button" 
           variant="outline"
           onClick={() => {
-            alert("Google sign in clicked!");
+            signInWithGoogle();
           }}
           className="w-full py-5 bg-white text-gray-700 font-medium border border-gray-300 hover:bg-gray-50 rounded-md flex items-center justify-center gap-2"
         >
@@ -16,4 +18,25 @@ export default function GoogleButton() {
           Continue with Google
      </Button>
     )
+}
+
+async function signInWithGoogle() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  });
+
+  if (error) {
+    console.log(error);
+    redirect("/error");
+  }
+
+  redirect(data.url);
 }
