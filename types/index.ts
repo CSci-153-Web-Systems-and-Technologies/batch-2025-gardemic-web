@@ -9,6 +9,9 @@ export interface InputFieldProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  error?: string;
 }
 
 export interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {}
+
+export interface CreateAccountFormProps extends React.ComponentPropsWithoutRef<"div"> {}
