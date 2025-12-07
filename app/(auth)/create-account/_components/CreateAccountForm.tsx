@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { InputField } from '@/components/InputField';
 import { CreateAccountFormProps } from '@/types';
+import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
 
@@ -18,7 +19,8 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
     password?: string;
     confirmPassword?: string;
   }>({});
-  const [isLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -49,6 +51,54 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+    const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const supabase = createClient();
+      
+      // Simulated Supabase signup - replace with actual implementation
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/main-page`,
+          data: {
+            username: username,
+          }
+        },
+      });
+      
+      if (error) throw error;
+      
+      // Success - redirect to success page
+      alert(`Account created successfully for ${email}! Please check your email to verify your account.`);
+      router.push("/sign-up-success");
+      
+    } catch (error: unknown) {
+      // Handle Supabase errors
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      
+      // Set appropriate field errors based on error message
+      if (errorMessage.toLowerCase().includes("email")) {
+        setErrors({ email: errorMessage });
+      } else if (errorMessage.toLowerCase().includes("password")) {
+        setErrors({ password: errorMessage });
+      } else {
+        setErrors({ email: errorMessage });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 
@@ -128,7 +178,7 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
 
             <div className="pt-2">
               <Button
-                // onClick={handleSignUp}
+                onClick={handleSignUp}
                 disabled={isLoading}
                 className="w-full text-base py-5 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
               >
