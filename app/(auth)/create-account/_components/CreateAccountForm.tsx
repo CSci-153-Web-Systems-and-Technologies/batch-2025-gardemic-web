@@ -6,6 +6,7 @@ import { InputField } from '@/components/InputField';
 import { CreateAccountFormProps } from '@/types';
 import { useRouter } from 'next/navigation';
 
+
 export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className, ...props }) => {
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -19,7 +20,36 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
   }>({});
   const [isLoading] = React.useState(false);
 
-
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+    
+    if (!username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    }
+    
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const handleGoogleSignUp = () => {
