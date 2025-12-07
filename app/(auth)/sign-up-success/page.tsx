@@ -6,6 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import Link from "next/link";
+
 export default function Page() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -23,6 +25,14 @@ export default function Page() {
                 You&apos;ve successfully signed up. Please check your email to
                 confirm your account before signing in.
               </p>
+              <div className="grid grid-cols-2 gap-4 my-4">
+                <div>
+                    <Link href={"/login"} className="col-start-1">Go to Login</Link>
+                </div>
+                <div>
+                    <a href="https://mail.google.com" className="col-start-2 text-right">Verify Email</a>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
