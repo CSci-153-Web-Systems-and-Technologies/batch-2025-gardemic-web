@@ -19,3 +19,8 @@ export interface CreateAccountFormProps extends React.ComponentPropsWithoutRef<"
 export interface SidebarHeaderProps {
   isOpen: boolean;
 }
+
+export interface SidebarToggleProps {
+  isLocked: boolean;
+  onToggle: () => void;
+}
