@@ -7,7 +7,7 @@ export const SidebarToggle: React.FC<SidebarToggleProps> = ({ isLocked, onToggle
     <button
       onClick={onToggle}
       className="
-        absolute -right-1/20 top-8 
+        absolute -right-3 top-4 
         bg-white hover:bg-gray-100 text-sage-500 
         rounded-full p-1 shadow-md border border-sage-200
         flex items-center justify-center
