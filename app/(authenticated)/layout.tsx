@@ -10,11 +10,8 @@ export default function ProtectedLayout({
   return (
     <>
       <div className="grid grid-cols-12">
-        
-        <div className="col-start-1 col-span-2">
-          <Sidebar />
-        </div>
-        <div className="font-aclonica col-start-3 col-span-9">
+        <Sidebar />
+        <div className="font-aclonica col-start-2 col-span-9">
           {children}
         </div>
       </div>        
