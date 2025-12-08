@@ -34,3 +34,9 @@ export interface SidebarItemProps {
   isOpen: boolean;
   onClick?: () => void;
 }
+
+export interface MenuItemConfig {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
