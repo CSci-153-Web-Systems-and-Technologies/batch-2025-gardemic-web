@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface InputFieldProps {
   label: string;
   id?: string;
@@ -23,4 +25,12 @@ export interface SidebarHeaderProps {
 export interface SidebarToggleProps {
   isLocked: boolean;
   onToggle: () => void;
+}
+
+export interface SidebarItemProps {
+  icon: ReactNode;
+  label: string;
+  isActive?: boolean;
+  isOpen: boolean;
+  onClick?: () => void;
 }
