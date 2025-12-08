@@ -40,3 +40,9 @@ export interface MenuItemConfig {
   label: string;
   icon: React.ReactNode;
 }
+
+export interface SidebarProfileProps {
+  name: string;
+  avatarUrl: string;
+  isOpen: boolean;
+}
