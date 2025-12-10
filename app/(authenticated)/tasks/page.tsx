@@ -1,4 +1,5 @@
 import ButtonBoard from "../_components/AddButtonBoard";
+import { NavBoard } from "../_components/NavBoard";
 
 export default function Protected()
 {
@@ -10,7 +11,10 @@ export default function Protected()
                 </div>
 
                 <ButtonBoard />
-                
+
+            </div>
+            <div className="w-full h-14 border-b-4 border-b-black/20">
+                <NavBoard />
             </div>
         </div>
     );
