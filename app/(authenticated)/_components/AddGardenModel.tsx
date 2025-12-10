@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { ActionButton } from "./ActionButton";
 
 interface AddGardenModalProps {
   isOpen: boolean;
@@ -52,30 +53,73 @@ export function AddGardenModal({ isOpen, onClose, onGardenAdded }: AddGardenModa
   if (!isOpen) return null;
 
   return (
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white p-6 rounded-md w-full max-w-lg">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <h2>Create Garden</h2>
-          <input 
-            placeholder="Name" 
-            value={name} 
-            onChange={e => setName(e.target.value)} 
-            className="border p-2" 
-            required 
-          />
-          <textarea 
-            placeholder="Description" 
-            value={description} 
-            onChange={e => setDescription(e.target.value)} 
-            className="border p-2" 
-          />
-          {error && <p className="text-red-500">{error}</p>}
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose}>Cancel</button>
-            <button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save"}
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center font-montserrat bg-black/60 backdrop-blur-sm px-4">
+
+      <div className="bg-accent-white border-2 border-gray-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden relative">
+        
+        <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-5">
+          
+          <div className="text-center space-y-2 mb-2">
+            <h2 className="text-3xl font-bold text-black font-serif">Create New Garden</h2>
+            <p className="text-gray-600 text-sm">
+              Create a new garden to organize your plant spaces.
+            </p>
           </div>
+
+          <div className="space-y-1">
+            <label htmlFor="gardenName" className="block text-base font-semibold text-gray-900">
+              Garden Name
+            </label>
+            <input
+              id="gardenName"
+              type="text"
+              placeholder="e.g: Veggie Garden"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 bg-white"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label htmlFor="gardenDesc" className="block text-base font-semibold text-gray-900">
+              Description (optional)
+            </label>
+            <textarea
+              id="gardenDesc"
+              rows={4}
+              placeholder="Describe your garden."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 bg-white resize-none"
+            />
+          </div>
+
+          {error && (
+            <div className="text-red-600 text-sm font-medium bg-red-50 p-2 rounded border border-red-200 text-center">
+              {error}
+            </div>
+          )}
+
+          <div className="flex justify-between items-center mt-4 pt-2 gap-4">
+            
+            <ActionButton 
+              type="submit" 
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create Garden"}
+            </ActionButton>
+
+            <ActionButton 
+              variant={"destructive"}
+              onClick={onClose}
+              className="bg-destructive-red hover:bg-destructive-dark-red text-white font-medium text-lg px-8 py-2 rounded-md shadow-sm transition-colors"
+            >
+              Cancel
+            </ActionButton>
+            
+          </div>
+
         </form>
       </div>
     </div>
