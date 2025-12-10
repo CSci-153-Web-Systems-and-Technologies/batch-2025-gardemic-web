@@ -30,7 +30,7 @@ export default function Sidebar() {
             <aside
                 {...containerProps}
                 className={`
-                    relative h-screen bg-accent-green shadow-xl flex flex-col py-6 px-3
+                    shrink-0 relative h-screen bg-accent-green shadow-xl flex flex-col py-6 px-3
                     transition-all duration-500 ease-[cubic-bezier(0.25,0.8,0.25,1)]
                     ${isOpen ? 'w-64' : 'w-20'}
                 `}

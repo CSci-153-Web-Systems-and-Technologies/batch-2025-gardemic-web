@@ -9,12 +9,12 @@ export default function ProtectedLayout({
 }>) {
   return (
     <>
-      <div className="grid grid-cols-12">
-        <Sidebar />
-        <div className="font-aclonica col-start-2 col-span-9">
-          {children}
-        </div>
-      </div>        
+       <div className="flex h-screen overflow-hidden">
+          <Sidebar />
+          <main className="font-aclonica flex-1 overflow-y-auto">
+            {children}
+          </main>
+       </div>
     </>
   );
 }

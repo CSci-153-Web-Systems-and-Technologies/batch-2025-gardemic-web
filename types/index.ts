@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 
 export interface InputFieldProps {
@@ -45,4 +46,15 @@ export interface SidebarProfileProps {
   name: string;
   avatarUrl: string;
   isOpen: boolean;
+}
+
+export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
+  children: React.ReactNode;
+}
+
+export interface DescriptionProps {
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+  className?: string;
 }
