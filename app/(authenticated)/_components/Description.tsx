@@ -4,8 +4,8 @@ import { DescriptionProps } from "@/types";
 export default function Description({ title, subtitle, children, className }: DescriptionProps)
 {
     return (
-    <div className={cn("flex flex-col md:flex-row md:items-center justify-between gap-2 ml-6 mt-2", className)}>
-      <div>
+    <div className={cn("flex flex-col md:flex-row md:items-center justify-between gap-2 ml-6", className)}>
+      <div className="mt-2">
         <h1 className="text-2xl font-bold font-montserrat text-gray-900">
           {title}
         </h1>
@@ -18,7 +18,7 @@ export default function Description({ title, subtitle, children, className }: De
       
 
       {children && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mr-6">
           {children}
         </div>
       )}
