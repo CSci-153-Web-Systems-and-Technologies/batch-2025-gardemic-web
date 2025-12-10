@@ -73,7 +73,7 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/tasks`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/tasks`,
           data: {
             username: username,
           }

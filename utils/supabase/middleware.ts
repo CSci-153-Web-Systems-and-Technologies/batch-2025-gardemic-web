@@ -34,6 +34,19 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims
 
+  if(user &&
+      (
+        request.nextUrl.pathname === "/" ||
+        request.nextUrl.pathname === "/login" ||
+        request.nextUrl.pathname === "/create-account" ||
+        request.nextUrl.pathname === "/sign-up-success"
+      )
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/tasks'
+    return NextResponse.redirect(url)
+  }
+
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
