@@ -6,10 +6,11 @@ import { createClient } from "@/utils/supabase/client";
 interface AddGardenModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onGardenAdded: () => void;
 }
 
-export function AddGardenModal({ isOpen, onClose }: AddGardenModalProps) {
-
+export function AddGardenModal({ isOpen, onClose, onGardenAdded }: AddGardenModalProps) {
+  const supabase = createClient();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,34 @@ export function AddGardenModal({ isOpen, onClose }: AddGardenModalProps) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("You must be logged in.");
+
+      const { error: insertError } = await supabase
+        .from("gardens")
+        .insert({
+          name: name,
+          description: description,
+          user_id: user.id,
+        });
+
+      if (insertError) throw insertError;
+
+      setName("");
+      setDescription("");
+
+      onGardenAdded();
+      onClose();
+
+    } catch (err: any) {
+      console.error("Error creating garden:", err);
+      setError(err.message || "Failed to create garden.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -52,5 +80,4 @@ export function AddGardenModal({ isOpen, onClose }: AddGardenModalProps) {
       </div>
     </div>
   );
-
 }
