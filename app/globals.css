@@ -18,6 +18,9 @@
   --color-accent-white: hsl(60, 57%, 91%);
   --color-accent-brown: hsl(25, 76%, 31%);
 
+  --color-destructive-red: #C81E1E;
+  --color-destructive-dark-red: #A51818;
+
   /* Fonts */
   --font-aclonica: 'Aclonica', sans-serif;
   --font-montserrat: 'Montserrat', sans-serif;
