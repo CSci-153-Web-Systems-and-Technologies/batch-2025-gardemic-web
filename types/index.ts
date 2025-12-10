@@ -51,3 +51,10 @@ export interface SidebarProfileProps {
 export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
   children: React.ReactNode;
 }
+
+export interface DescriptionProps {
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+  className?: string;
+}
