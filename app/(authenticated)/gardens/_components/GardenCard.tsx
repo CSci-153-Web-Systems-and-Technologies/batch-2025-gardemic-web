@@ -5,9 +5,11 @@ import GardenImage from "@/public/garden-card-image.jpg";
 
 interface GardenCardProps {
   garden: GardenWithCount;
+  onAddPlant: (id: string) => void;
+  onViewPlants: (id: string) => void;
 }
 
-export function GardenCard({ garden }: GardenCardProps) {
+export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps) {
   const formattedDate = new Date(garden.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -39,8 +41,13 @@ export function GardenCard({ garden }: GardenCardProps) {
         </div>
 
         <div className="flex gap-4 mt-auto pt-2">
-            <button>Add Plant</button>
-            <button>View Plants</button>
+          <ActionButton onClick={() => onAddPlant(garden.garden_id)}>
+            Add Plant
+          </ActionButton>
+          
+          <ActionButton onClick={() => onViewPlants(garden.garden_id)}>
+            View Plants
+          </ActionButton>
         </div>
       </div>
     </div>
