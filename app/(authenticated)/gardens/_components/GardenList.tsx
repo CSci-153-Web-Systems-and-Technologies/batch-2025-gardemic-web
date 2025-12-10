@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { GardenCard } from "./GardenCard";
+import { AddPlantModal } from "../../_components/AddPlantModal";
+import { ViewPlantsModal } from "../../_components/ViewPlantsModal";
 import { GardenWithCount } from "@/types";
 
 export default function GardenList() {
@@ -10,6 +12,10 @@ export default function GardenList() {
   const [gardens, setGardens] = useState<GardenWithCount[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+  const [activeGardenId, setActiveGardenId] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
 
   const fetchGardens = async () => {
@@ -36,6 +42,21 @@ export default function GardenList() {
   }, []);
 
 
+  const openAddModal = (id: string) => {
+    setActiveGardenId(id);
+    setIsAddModalOpen(true);
+  };
+
+  const openViewModal = (id: string) => {
+    setActiveGardenId(id);
+    setIsViewModalOpen(true);
+  };
+
+  const closeModals = () => {
+    setIsAddModalOpen(false);
+    setIsViewModalOpen(false);
+    setActiveGardenId(null);
+  };
 
   if (loading) return <div className="p-10 text-center">Loading...</div>;
 
@@ -46,11 +67,29 @@ export default function GardenList() {
           <GardenCard
             key={garden.garden_id}
             garden={garden}
-            onAddPlant={() => alert("Add Plant clicked")}
-            onViewPlants={() => alert("View Plants clicked")}
+            onAddPlant={openAddModal}
+            onViewPlants={openViewModal}
           />
         ))}
       </div>
+
+      {activeGardenId && currentUser && (
+        <>
+          <AddPlantModal
+            isOpen={isAddModalOpen}
+            onClose={closeModals}
+            gardenId={activeGardenId}
+            userId={currentUser}
+            onPlantAdded={fetchGardens}
+          />
+          
+          <ViewPlantsModal
+            isOpen={isViewModalOpen}
+            onClose={closeModals}
+            gardenId={activeGardenId}
+          />
+        </>
+      )}
     </>
   );
 }
