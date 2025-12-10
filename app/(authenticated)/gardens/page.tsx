@@ -1,11 +1,11 @@
+import Description from "../_components/Description";
+
 export default function GardensPage()
 {
     return (
         <>
           <div className="bg-accent-white h-full">
-            <h1 className="text-2xl">
-                Gardens page
-            </h1>
+            <Description title="My Gardens" subtitle="Organize your plants via garden spaces" />
           </div>
         </>
     );
