@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { ReactNode } from "react";
+
 export interface InputFieldProps {
   label: string;
   id?: string;
@@ -15,3 +18,43 @@ export interface InputFieldProps {
 export interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {}
 
 export interface CreateAccountFormProps extends React.ComponentPropsWithoutRef<"div"> {}
+
+export interface SidebarHeaderProps {
+  isOpen: boolean;
+}
+
+export interface SidebarToggleProps {
+  isLocked: boolean;
+  onToggle: () => void;
+}
+
+export interface SidebarItemProps {
+  icon: ReactNode;
+  label: string;
+  isActive?: boolean;
+  isOpen: boolean;
+  onClick?: () => void;
+}
+
+export interface MenuItemConfig {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
+export interface SidebarProfileProps {
+  name: string;
+  avatarUrl: string;
+  isOpen: boolean;
+}
+
+export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
+  children: React.ReactNode;
+}
+
+export interface DescriptionProps {
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+  className?: string;
+}
