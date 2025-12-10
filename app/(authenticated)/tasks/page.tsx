@@ -1,4 +1,4 @@
-import { ActionButton } from "../_components/ActionButton";
+import ButtonBoard from "../_components/AddButtonBoard";
 
 export default function Protected()
 {
@@ -8,6 +8,9 @@ export default function Protected()
                 <div className="text-3xl font-montserrat font-bold py-6.5 pl-6">
                     Tasks
                 </div>
+
+                <ButtonBoard />
+                
             </div>
         </div>
     );
