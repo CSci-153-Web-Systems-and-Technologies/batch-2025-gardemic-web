@@ -14,10 +14,6 @@ export default function ButtonBoard() {
         alert('Add Task clicked!');
     }
 
-    const handleAddGarden = () => {
-        alert('Add Garden clicked!');
-    }
-
     const handleLogout = async () => {
         setIsLoading(true);
         const supabase = createClient();
@@ -37,11 +33,7 @@ export default function ButtonBoard() {
                 Add Task
             </ActionButton>
 
-            <ActionButton onClick={handleAddGarden}>
-                Add Garden
-            </ActionButton>
-
-            <ActionButton onClick={handleLogout} variant={"destructive"}>
+            <ActionButton onClick={handleLogout} variant={"destructive"} className="bg-[#C81E1E] hover:bg-[#A51818] text-white font-medium text-lg px-6 py-5 rounded-md shadow-sm transition-colors">
                 {isLoading ? "Logging out..." : "Logout"}
             </ActionButton>
         </div>
