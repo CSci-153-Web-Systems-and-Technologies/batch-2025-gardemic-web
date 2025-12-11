@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Search } from 'lucide-react';
 import { Plant } from '@/types';
 import { cn } from '@/lib/utils';
+import PlantImage from "@/public/plant-placeholder.png"
 
 interface PlantSidebarProps {
   plants: Plant[];
@@ -14,6 +15,7 @@ interface PlantSidebarProps {
 
 export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps) => {
   const [search, setSearch] = useState('');
+
 
   const filteredPlants = plants.filter((p) => 
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -54,7 +56,7 @@ export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps
 
               <div className="w-12 h-12 relative rounded-md overflow-hidden bg-gray-100 shrink-0">
                  <Image 
-                   src={plant.image_url || "/placeholder-plant.png"} 
+                   src={plant.image_url || PlantImage} 
                    alt={plant.name} 
                    fill 
                    className="object-cover"
