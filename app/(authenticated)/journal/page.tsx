@@ -71,7 +71,7 @@ export default function JournalPage()
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden font-sans bg-[#FDFCF6]">
+    <div className="flex h-screen w-full overflow-hidden font-sans bg-accent-white">
       
 
       <JournalSidebar 

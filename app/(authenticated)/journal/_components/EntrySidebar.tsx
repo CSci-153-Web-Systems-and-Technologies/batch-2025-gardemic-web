@@ -82,7 +82,7 @@ const JournalSidebar = ({
                     onClick={() => onSelect(entry)}
                     className={`flex w-full flex-col items-start rounded-lg border p-3 transition-all hover:shadow-md ${
                       selectedId === entry.journal_id
-                        ? 'border-l-4 border-l-green-500 border-t-white border-r-white border-b-white bg-white shadow-md'
+                        ? 'border-l-4 border-l-green-500 border-y-white border-r-white  bg-white shadow-md'
                         : 'border-transparent bg-white shadow-sm hover:border-gray-200'
                     }`}
                   >

@@ -16,15 +16,15 @@ const EntryContent = ({
 }: EntryContentProps) => {
   if (!entry) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-[#FDFCF6] text-gray-400">
+      <div className="flex h-full w-full items-center justify-center bg-accent-white text-gray-400">
         Select an entry to view details
       </div>
     );
   }
 
   return (
-    <div className="flex h-full w-full justify-center overflow-y-auto bg-[#FDFCF6] p-8">
-      <div className="w-full max-w-3xl rounded-xl border border-gray-300 bg-[#F2F1EA] p-8 shadow-sm h-fit min-h-[600px] relative">
+    <div className="flex h-full w-full justify-center overflow-y-auto bg-accent-white p-8">
+      <div className="w-full max-w-3xl rounded-xl border border-gray-300 bg-[#F2F1EA] p-8 shadow-sm h-fit min-h-150 relative">
         
 
         <div className="flex justify-end gap-2 mb-4">
