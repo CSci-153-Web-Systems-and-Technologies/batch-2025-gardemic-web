@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { InputField } from '@/components/InputField';
 import { SelectField } from '../../_components/SelectField';
 import { Task } from '@/types';
+
 
 import { createClient } from '@/utils/supabase/client';
 
@@ -16,7 +18,9 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   
-  // Dropdown Data
+  // 1. Get today's date in 'yyyy-MM-dd' format using local time
+  const today = format(new Date(), 'yyyy-MM-dd');
+
   const [availablePlants, setAvailablePlants] = useState<{label: string, value: string}[]>([]);
   const [availableGardens, setAvailableGardens] = useState<{label: string, value: string}[]>([]);
 
@@ -31,18 +35,12 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
   const supabase = createClient();
 
-  // Optimized Data Fetching
   useEffect(() => {
     let isMounted = true;
 
     const initData = async () => {
       try {
-
-        const plantsPromise = supabase
-          .from('plants')
-          .select('plant_id, name');
-
-        // 2. Get the USER
+        const plantsPromise = supabase.from('plants').select('plant_id, name');
         const { data: { user }, error: authError } = await supabase.auth.getUser();
 
         if (authError || !user) {
@@ -51,14 +49,11 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         }
         if (isMounted) setUserId(user.id);
 
-        // 3. Fetch GARDENS (Now that we have the user_id)
         const gardensPromise = supabase
           .from('gardens')
           .select('garden_id, name')
           .eq('user_id', user.id);
 
-        // 4. Resolve both requests
-        // plantsPromise has been running this whole time, minimizing the waterfall effect
         const [plantsResult, gardensResult] = await Promise.all([
           plantsPromise,
           gardensPromise
@@ -86,7 +81,6 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
     initData();
 
-    // Cleanup to prevent memory leaks if component unmounts mid-request
     return () => { isMounted = false; };
   }, [supabase]);
 
@@ -101,7 +95,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         garden_id: formData.garden_id,
         plant_id: formData.plant_id,
         task_type: formData.task_type,
-        description: `${formData.description}`,
+        description: formData.description,
         start_date: formData.start_date,
         end_date: formData.end_date,
       };
@@ -186,6 +180,8 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
           value={formData.start_date}
           onChange={handleChange}
           required
+          // 2. Prevent past dates
+          min={today} 
         />
         <InputField
           label="End Date"
@@ -195,6 +191,8 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
           value={formData.end_date}
           onChange={handleChange}
           required
+          // 3. Ensure End Date is never before Start Date (or Today if start date isn't picked)
+          min={formData.start_date || today}
         />
       </div>
 
