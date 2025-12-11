@@ -39,7 +39,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
       try {
 
         const plantsPromise = supabase
-          .from('Plant')
+          .from('plants')
           .select('plant_id, name');
 
         // 2. Get the USER
