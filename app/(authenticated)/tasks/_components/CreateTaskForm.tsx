@@ -5,8 +5,6 @@ import { format } from 'date-fns';
 import { InputField } from '@/components/InputField';
 import { SelectField } from '../../_components/SelectField';
 import { Task } from '@/types';
-
-
 import { createClient } from '@/utils/supabase/client';
 
 interface CreateTaskFormProps {
@@ -14,15 +12,25 @@ interface CreateTaskFormProps {
   onCancel: () => void;
 }
 
+interface FormErrors {
+  garden_id?: string;
+  plant_id?: string;
+  task_type?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
 export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   
-  // 1. Get today's date in 'yyyy-MM-dd' format using local time
   const today = format(new Date(), 'yyyy-MM-dd');
 
   const [availablePlants, setAvailablePlants] = useState<{label: string, value: string}[]>([]);
   const [availableGardens, setAvailableGardens] = useState<{label: string, value: string}[]>([]);
+  
+
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const [formData, setFormData] = useState({
     garden_id: '',
@@ -84,8 +92,43 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
     return () => { isMounted = false; };
   }, [supabase]);
 
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    if (!formData.garden_id) {
+      newErrors.garden_id = "Please select a garden";
+      isValid = false;
+    }
+    if (!formData.plant_id) {
+      newErrors.plant_id = "Please select a plant";
+      isValid = false;
+    }
+    if (!formData.task_type) {
+      newErrors.task_type = "Please select a task type";
+      isValid = false;
+    }
+    if (!formData.start_date) {
+      newErrors.start_date = "Start date is required";
+      isValid = false;
+    }
+    if (!formData.end_date) {
+      newErrors.end_date = "End date is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+
+    if (!validateForm()) {
+        return; 
+    }
+
     if (!userId) return;
     setLoading(true);
 
@@ -119,7 +162,12 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (errors[name as keyof FormErrors]) {
+        setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const taskTypeOptions = [
@@ -139,6 +187,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         onChange={handleChange}
         options={availableGardens}
         required
+        error={errors.garden_id} 
       />
       
       <SelectField
@@ -148,6 +197,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         onChange={handleChange}
         options={availablePlants} 
         required
+        error={errors.plant_id} 
       />
 
       <SelectField
@@ -157,6 +207,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         onChange={handleChange}
         options={taskTypeOptions}
         required
+        error={errors.task_type}
       />
 
       <div className="flex flex-col gap-2">
@@ -164,7 +215,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
          <textarea
             name="description"
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
             placeholder="Add any specific notes..."
             value={formData.description}
             onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
@@ -180,8 +231,8 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
           value={formData.start_date}
           onChange={handleChange}
           required
-          // 2. Prevent past dates
           min={today} 
+          error={errors.start_date}
         />
         <InputField
           label="End Date"
@@ -191,8 +242,8 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
           value={formData.end_date}
           onChange={handleChange}
           required
-          // 3. Ensure End Date is never before Start Date (or Today if start date isn't picked)
           min={formData.start_date || today}
+          error={errors.end_date}
         />
       </div>
 
