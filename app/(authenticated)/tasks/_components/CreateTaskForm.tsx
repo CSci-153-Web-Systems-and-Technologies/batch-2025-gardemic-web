@@ -166,11 +166,11 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
       />
 
       <div className="flex flex-col gap-2">
-         <label className="text-sm font-medium text-gray-900">Description (optional)</label>
+         <label className="text-sm font-medium text-black">Description (optional)</label>
          <textarea
             name="description"
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
             placeholder="Add any specific notes..."
             value={formData.description}
             onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
