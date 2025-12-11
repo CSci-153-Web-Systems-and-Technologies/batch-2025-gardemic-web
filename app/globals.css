@@ -21,6 +21,10 @@
   --color-destructive-red: #C81E1E;
   --color-destructive-dark-red: #A51818;
 
+  --color-hover-green: oklch(79.2% 0.209 151.711);
+  --color-complement-green: oklch(59.6% 0.145 163.225);
+
+
   /* Fonts */
   --font-aclonica: 'Aclonica', sans-serif;
   --font-montserrat: 'Montserrat', sans-serif;

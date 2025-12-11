@@ -13,15 +13,15 @@ interface PlantDetailProps {
 export const PlantDetail = ({ plant }: PlantDetailProps) => {
   if (!plant) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-accent-white text-gray-400">
+      <div className="flex-1 flex items-center justify-center font-extrabold font-montserrat bg-accent-white text-gray-400">
         Select a plant to view details
       </div>
     );
   }
 
   return (
-    <main className="flex-1 bg-accent-white p-6 md:p-10 h-full overflow-y-auto flex justify-center">
-      <div className="max-w-3xl w-full bg-white rounded-xl shadow-sm border border-[#e0e0d0] p-8 md:p-12 min-h-200">
+    <main className="flex-1 bg-accent-white p-6 md:p-10 h-full overflow-y-auto flex justify-center font-montserrat">
+      <div className="max-w-3xl w-full bg-white rounded-xl shadow-sm border border-black p-8 md:p-12 min-h-200">
         
         {/* Header */}
         <div className="border-b border-gray-200 pb-8 mb-8">
@@ -46,7 +46,7 @@ export const PlantDetail = ({ plant }: PlantDetailProps) => {
         {/* Description */}
         <section className="mb-8 border border-gray-200 rounded-xl p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">About</h2>
-          <p className="text-gray-600 leading-relaxed text-sm">
+          <p className="text-black leading-relaxed text-md">
             {plant.description || "No description available."}
           </p>
         </section>

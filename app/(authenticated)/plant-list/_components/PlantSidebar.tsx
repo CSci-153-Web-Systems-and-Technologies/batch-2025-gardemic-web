@@ -22,9 +22,9 @@ export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps
   );
 
   return (
-    <aside className="w-full md:w-80 bg-white/80 border-r-4 border-[#e0e0d0]  h-full flex flex-col">
+    <aside className="w-full md:w-80 bg-white/80 border-r-4 border-[#e0e0d0]  h-full flex flex-col font-montserrat">
       <div className="p-6 pb-2">
-        <h2 className="text-xl font-bold text-gray-800 mb-6">Plant List</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Plant List</h2>
         
         {/* Search Input */}
         <div className="relative mb-6">
@@ -52,7 +52,7 @@ export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps
                 isSelected ? "bg-white shadow-sm" : "hover:bg-white/60"
               )}
             >
-              {isSelected && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-green-400 to-emerald-600" />}
+              {isSelected && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-hover-green to-complement-green" />}
 
               <div className="w-12 h-12 relative rounded-md overflow-hidden bg-gray-100 shrink-0">
                  <Image 
