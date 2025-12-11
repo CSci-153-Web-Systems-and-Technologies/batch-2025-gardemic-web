@@ -85,6 +85,22 @@ export default function JournalPage()
         totalCount={totalCount}
         onCreate={handleCreateEntry}
       />
+
+
+      <main className="flex-1 h-full relative">
+        {loading && entries.length === 0 ? (
+
+           <div className="flex h-full w-full items-center justify-center text-gray-400 animate-pulse">
+             Loading journal entries...
+           </div>
+        ) : (
+          <EntryContent 
+            entry={selectedEntry} 
+            onEdit={() => setIsEditOpen(true)}
+            onDelete={() => setIsDeleteOpen(true)}
+          />
+        )}
+      </main>
     </div>
   );
 }
