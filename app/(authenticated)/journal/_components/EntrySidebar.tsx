@@ -1,18 +1,33 @@
+import React, { useMemo } from 'react';
 import { Search, SlidersHorizontal, Plus } from 'lucide-react';
+import { JournalEntry } from '@/types';
+import { formatDate, groupEntriesByMonthYear } from '@/lib/utils';
 import { ActionButton } from '../../_components/ActionButton';
 
 type SidebarProps = {
+  entries: JournalEntry[];
+  selectedId: string | null;
+  onSelect: (entry: JournalEntry) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  totalCount: number;
   onCreate: () => void
 };
 
 const JournalSidebar = ({ 
+  entries, 
+  selectedId, 
+  onSelect, 
   searchQuery, 
   setSearchQuery,
   onCreate
 }: SidebarProps) => {
-  
+
+
+  // Group the entries that were passed down (already paginated by the parent)
+  const groupedEntries = useMemo(() => groupEntriesByMonthYear(entries), [entries]);
 
   return (
     <div className="flex h-full w-full flex-col border-r border-[#dcdcdc] bg-[#FDFCF6] p-4 md:w-80 lg:w-96">
@@ -41,6 +56,45 @@ const JournalSidebar = ({
         <SlidersHorizontal className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-green-500" />
       </div>
 
+      {/* Entry List */}
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        {entries.length === 0 ? (
+          <div className="mt-10 text-center text-sm text-gray-500">
+            {searchQuery ? "No matches found." : "No notes created, create entry?"}
+          </div>
+        ) : (
+          Object.entries(groupedEntries).map(([group, groupEntries]) => (
+            <div key={group} className="mb-6">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                {group}
+              </h3>
+              <div className="space-y-3">
+                {groupEntries.map((entry) => (
+                  <button
+                    key={entry.journal_id}
+                    onClick={() => onSelect(entry)}
+                    className={`flex w-full flex-col items-start rounded-lg border p-3 transition-all hover:shadow-md ${
+                      selectedId === entry.journal_id
+                        ? 'border-l-4 border-l-green-500 border-t-white border-r-white border-b-white bg-white shadow-md'
+                        : 'border-transparent bg-white shadow-sm hover:border-gray-200'
+                    }`}
+                  >
+                    <div className="mb-1 w-full truncate text-left font-bold text-gray-800">
+                      {entry.title}
+                    </div>
+                    <div className="mb-2 text-xs text-gray-400">
+                      Made: {formatDate(entry.created_at)}
+                    </div>
+                    <p className="line-clamp-2 w-full text-left text-sm text-gray-600">
+                      {entry.content}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
     </div>
   );
