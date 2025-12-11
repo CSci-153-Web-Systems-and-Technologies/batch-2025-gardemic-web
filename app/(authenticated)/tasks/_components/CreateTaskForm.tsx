@@ -31,14 +31,97 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
   const supabase = createClient();
 
+  // Optimized Data Fetching
+  useEffect(() => {
+    let isMounted = true;
+
+    const initData = async () => {
+      try {
+
+        const plantsPromise = supabase
+          .from('Plant')
+          .select('plant_id, name');
+
+        // 2. Get the USER
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+          console.error("User not authenticated");
+          return;
+        }
+        if (isMounted) setUserId(user.id);
+
+        // 3. Fetch GARDENS (Now that we have the user_id)
+        const gardensPromise = supabase
+          .from('gardens')
+          .select('garden_id, name')
+          .eq('user_id', user.id);
+
+        // 4. Resolve both requests
+        // plantsPromise has been running this whole time, minimizing the waterfall effect
+        const [plantsResult, gardensResult] = await Promise.all([
+          plantsPromise,
+          gardensPromise
+        ]);
+
+        if (isMounted) {
+          if (plantsResult.data) {
+            setAvailablePlants(plantsResult.data.map((p: any) => ({
+              label: p.name,
+              value: p.plant_id
+            })));
+          }
+
+          if (gardensResult.data) {
+            setAvailableGardens(gardensResult.data.map((g: any) => ({
+              label: g.name,
+              value: g.garden_id
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading form data:', error);
+      }
+    };
+
+    initData();
+
+    // Cleanup to prevent memory leaks if component unmounts mid-request
+    return () => { isMounted = false; };
+  }, [supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
     setLoading(true);
 
-  }
+    try {
+      const taskPayload = {
+        user_id: userId,
+        garden_id: formData.garden_id,
+        plant_id: formData.plant_id,
+        task_type: formData.task_type,
+        description: `${formData.description}`,
+        start_date: formData.start_date,
+        end_date: formData.end_date,
+      };
 
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([taskPayload])
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (data) onSuccess(data as Task);
+
+    } catch (error) {
+      console.error('Error creating task:', error);
+      alert('Failed to create task');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
