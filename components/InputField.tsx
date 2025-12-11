@@ -1,20 +1,19 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { InputFieldProps } from '@/types';
+
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  error?: string;
+}
 
 export const InputField: React.FC<InputFieldProps> = ({
   label,
-  id,
   name,
-  type = 'text',
-  placeholder,
-  value,
-  onChange,
-  required = false,
-  disabled = false,
+  id,
   className = '',
-  error
+  error,
+  ...props
 }) => {
   const generatedId = React.useId();
   const inputId = id || generatedId;
@@ -28,12 +27,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       <Input
         id={inputId}
         name={inputName}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        required={required}
-        disabled={disabled}
+        {...props}
         className={`w-full px-3 py-2 border rounded-md ${
           error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
         }`}
