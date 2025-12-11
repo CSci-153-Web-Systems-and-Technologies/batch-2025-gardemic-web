@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { Search, SlidersHorizontal, Plus } from 'lucide-react';
-import { JournalEntry } from '@/types';
-import { formatDate, groupEntriesByMonthYear } from '@/lib/utils';
+import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { JournalEntry } from '@/types'; 
+import { formatDate, groupEntriesByMonthYear } from '@/lib/utils'; 
 import { ActionButton } from '../../_components/ActionButton';
 
 type SidebarProps = {
@@ -22,9 +22,16 @@ const JournalSidebar = ({
   onSelect, 
   searchQuery, 
   setSearchQuery,
+  currentPage,
+  onPageChange,
+  totalCount,
   onCreate
 }: SidebarProps) => {
+  
+  const ITEMS_PER_PAGE = 10;
+  
 
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Group the entries that were passed down (already paginated by the parent)
   const groupedEntries = useMemo(() => groupEntriesByMonthYear(entries), [entries]);
@@ -96,6 +103,30 @@ const JournalSidebar = ({
         )}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => onPageChange(currentPage - 1)}
+            className="rounded p-1 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <span className="text-xs text-gray-500">
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          <button 
+            disabled={currentPage >= totalPages}
+            onClick={() => onPageChange(currentPage + 1)}
+            className="rounded p-1 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
