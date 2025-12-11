@@ -101,6 +101,24 @@ export default function JournalPage()
           />
         )}
       </main>
+
+
+      {selectedEntry && (
+        <>
+          <EditEntryModal 
+            entry={selectedEntry}
+            isOpen={isEditOpen}
+            onClose={() => setIsEditOpen(false)}
+            onSave={handleSave}
+          />
+          
+          <DeleteEntryModal 
+            isOpen={isDeleteOpen}
+            onClose={() => setIsDeleteOpen(false)}
+            onConfirm={handleConfirmDelete}
+          />
+        </>
+      )}
     </div>
   );
 }
