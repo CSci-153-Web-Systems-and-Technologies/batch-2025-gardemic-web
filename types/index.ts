@@ -69,6 +69,8 @@ export interface Plant {
   temperature_requirements: string | null;
   growth: string | null;
   created_at: string;
+  image_url?: string;
+  scientific_name?: string;
 }
 
 export interface Garden {
