@@ -88,6 +88,19 @@ export interface GardenPlant {
   added_at: string;
 }
 
+export interface Task {
+  task_id: string;
+  user_id: string;
+  garden_id: string;
+  plant_id: string | null;
+  task_type: string;
+  task_status: string;
+  description: string | null;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+}
+
 export interface JournalEntry {
   journal_id: string;
   user_id: string;
