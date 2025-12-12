@@ -28,7 +28,7 @@ export default function Features() {
 
   return (
     <>
-      <div className="flex items-center justify-center mx-auto text-4xl font-aclonica">Features</div>
+      <div className="flex items-center justify-center mx-auto text-4xl font-aclonica mt-60 mb-15">Features</div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto mb-12 font-montserrat">
         {features.map((feature, index) => {
         const Icon = feature.icon;
