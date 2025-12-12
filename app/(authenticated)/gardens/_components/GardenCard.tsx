@@ -7,9 +7,10 @@ interface GardenCardProps {
   garden: GardenWithCount;
   onAddPlant: (id: string) => void;
   onViewPlants: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps) {
+export function GardenCard({ garden, onAddPlant, onViewPlants, onDelete }: GardenCardProps) {
   const formattedDate = new Date(garden.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -17,6 +18,13 @@ export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps
   });
 
   const plantCount = garden.garden_plants?.[0]?.count ?? 0;
+
+  const handleDeleteClick = () => {
+    const confirmed = window.confirm(`Are you sure you want to delete "${garden.name}"? This cannot be undone.`);
+    if (confirmed) {
+      onDelete(garden.garden_id);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white rounded-xl font-montserrat shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
@@ -40,13 +48,22 @@ export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps
           </div>
         </div>
 
-        <div className="flex gap-4 mt-auto pt-2">
+        {/* Actions */}
+        <div className="flex flex-wrap gap-2 mt-auto pt-2">
           <ActionButton onClick={() => onAddPlant(garden.garden_id)}>
             Add Plant
           </ActionButton>
           
           <ActionButton onClick={() => onViewPlants(garden.garden_id)}>
             View Plants
+          </ActionButton>
+
+          {/* Delete Button */}
+          <ActionButton 
+            onClick={handleDeleteClick}
+            className="bg-red-500 hover:bg-red-600 border-red-500 text-white ml-auto"
+          >
+            Delete
           </ActionButton>
         </div>
       </div>

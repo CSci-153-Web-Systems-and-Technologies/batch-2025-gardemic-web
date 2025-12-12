@@ -37,6 +37,25 @@ export default function GardenList() {
     }
   };
 
+  const handleDeleteGarden = async (gardenId: string) => {
+    try {
+      const { error } = await supabase
+        .from("gardens")
+        .delete()
+        .eq("garden_id", gardenId);
+
+      if (error) throw error;
+
+      setGardens((prevGardens) => 
+        prevGardens.filter((g) => g.garden_id !== gardenId)
+      );
+      
+    } catch (error) {
+      console.error("Error deleting garden:", error);
+      alert("Failed to delete garden. Please try again.");
+    }
+  };
+
   useEffect(() => {
     fetchGardens();
   }, []);
@@ -69,6 +88,7 @@ export default function GardenList() {
             garden={garden}
             onAddPlant={openAddModal}
             onViewPlants={openViewModal}
+            onDelete={handleDeleteGarden} 
           />
         ))}
       </div>
