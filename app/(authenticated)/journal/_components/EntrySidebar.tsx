@@ -29,11 +29,8 @@ const JournalSidebar = ({
 }: SidebarProps) => {
   
   const ITEMS_PER_PAGE = 10;
-  
-
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  // Group the entries that were passed down (already paginated by the parent)
   const groupedEntries = useMemo(() => groupEntriesByMonthYear(entries), [entries]);
 
   return (
@@ -63,8 +60,8 @@ const JournalSidebar = ({
         <SlidersHorizontal className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-green-500" />
       </div>
 
-      {/* Entry List */}
-      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+      {/* Entry List - Added pb-24 for mobile nav clearance */}
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-24 md:pb-0">
         {entries.length === 0 ? (
           <div className="mt-10 text-center text-sm text-gray-500">
             {searchQuery ? "No matches found." : "No notes created, create entry?"}
@@ -105,7 +102,7 @@ const JournalSidebar = ({
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
+        <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 pb-20 md:pb-0">
           <button 
             disabled={currentPage === 1}
             onClick={() => onPageChange(currentPage - 1)}
