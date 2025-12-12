@@ -3,12 +3,10 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import NotificationCard from "./_components/NotificationCard";
-import TaskPageHeader from "../_components/TaskPageHeader"; // Reusing your header
 import Description from "../_components/Description";
-import { InputField } from "@/components/InputField"; // Reusing your input
 
 interface NotificationItem {
-  id: string;
+  notif_id: string;
   type: string;
   title: string;
   message: string;
@@ -95,7 +93,7 @@ export default function NotificationsPage() {
           ) : (
             filteredNotifications.map(notification => (
               <NotificationCard
-                key={notification.id}
+                key={notification.notif_id}
                 type={notification.type}
                 title={notification.title}
                 message={notification.message}

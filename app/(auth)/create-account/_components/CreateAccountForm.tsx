@@ -68,7 +68,7 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
     try {
       const supabase = createClient();
       
-      // Simulated Supabase signup - replace with actual implementation
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -104,21 +104,22 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
   };
 
 
-
+  // Added 'py-10' to ensure vertical spacing on mobile if content is tall
   return (
     <div 
-      className={`min-h-screen flex items-center justify-center bg-accent-white p-4 ${className || ''}`} 
+      className={`min-h-screen flex items-center justify-center bg-accent-white py-10 px-4 md:px-6 ${className || ''}`} 
       {...props}
     >
-      <div className="w-full max-w-xl px-4">
+      <div className="w-full max-w-xl">
         <div className="text-center my-8">
-          <h1 className="font-aclonica text-4xl font-bold text-black mb-2">
+          {/* Made text size responsive: text-2xl on mobile, text-4xl on desktop */}
+          <h1 className="font-aclonica text-2xl md:text-4xl font-bold text-black mb-2">
             Create your Gardemic Account
           </h1>
         </div>
 
         <div className="rounded-lg bg-accent-white">
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <InputField
               id="username"
               name="username"

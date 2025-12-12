@@ -10,8 +10,10 @@ export default function GardenPage() {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // New state to control mobile overlay visibility
+  const [showMobileDetail, setShowMobileDetail] = useState(false);
 
-  // 1. Fetch Data
   useEffect(() => {
     const fetchPlants = async () => {
       const supabase = createClient();
@@ -22,7 +24,9 @@ export default function GardenPage() {
       
       if (!error && data) {
         setPlants(data);
-        if (data.length > 0) setSelectedPlant(data[0]); // Default to first item
+        if (data.length > 0) {
+           setSelectedPlant(data[0]); 
+        }
       }
       setLoading(false);
     };
@@ -30,22 +34,34 @@ export default function GardenPage() {
     fetchPlants();
   }, []);
 
+  const handlePlantSelect = (plant: Plant) => {
+    setSelectedPlant(plant);
+    setShowMobileDetail(true); // Trigger the overlay on mobile
+  };
+
   if (loading) return <div>Loading...</div>;
 
-  // 2. Render Layout
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-accent-white">
-      {/* Left Sidebar */}
+    <div className="flex h-screen w-full overflow-hidden bg-accent-white relative">
       <PlantSidebar 
         plants={plants} 
         selectedId={selectedPlant?.plant_id || null} 
-        onSelect={setSelectedPlant} 
+        onSelect={handlePlantSelect} 
       />
       
-      {/* Right Detail View */}
-      <PlantDetail 
-        plant={selectedPlant} 
-      />
+
+      <div 
+        className={`
+          fixed inset-0 z-50 bg-accent-white transition-transform duration-300 ease-in-out
+          ${showMobileDetail ? 'translate-x-0' : 'translate-x-full'}
+          md:relative md:inset-auto md:transform-none md:flex-1 md:translate-x-0
+        `}
+      >
+        <PlantDetail 
+          plant={selectedPlant} 
+          onBack={() => setShowMobileDetail(false)}
+        />
+      </div>
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback ,useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { GardenCard } from "./GardenCard";
 import { AddPlantModal } from "../../_components/AddPlantModal";
 import { ViewPlantsModal } from "../../_components/ViewPlantsModal";
+import { DeleteGardenModal } from "../_components/DeleteGardenModal";
 import { GardenWithCount } from "@/types";
 
 export default function GardenList() {
@@ -14,11 +15,15 @@ export default function GardenList() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   const [activeGardenId, setActiveGardenId] = useState<string | null>(null);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // State to store the specific garden being targeted for deletion
+  const [gardenToDelete, setGardenToDelete] = useState<{id: string, name: string} | null>(null);
 
-  const fetchGardens = async () => {
+const fetchGardens = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user?.id ?? null);
@@ -35,11 +40,11 @@ export default function GardenList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
   useEffect(() => {
     fetchGardens();
-  }, []);
+  }, [fetchGardens]); 
 
 
   const openAddModal = (id: string) => {
@@ -52,10 +57,42 @@ export default function GardenList() {
     setIsViewModalOpen(true);
   };
 
+
+  const openDeleteModal = (id: string, name: string) => {
+    setGardenToDelete({ id, name });
+    setIsDeleteModalOpen(true);
+  };
+
   const closeModals = () => {
     setIsAddModalOpen(false);
     setIsViewModalOpen(false);
+    setIsDeleteModalOpen(false);
     setActiveGardenId(null);
+    setGardenToDelete(null);
+  };
+
+  // 2. Performs the actual deletion after confirmation
+  const executeDeleteGarden = async () => {
+    if (!gardenToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("gardens")
+        .delete()
+        .eq("garden_id", gardenToDelete.id);
+
+      if (error) throw error;
+
+      // Update UI
+      setGardens((prevGardens) => 
+        prevGardens.filter((g) => g.garden_id !== gardenToDelete.id)
+      );
+      
+      closeModals();
+    } catch (error) {
+      console.error("Error deleting garden:", error);
+      alert("Failed to delete garden.");
+    }
   };
 
   if (loading) return <div className="p-10 text-center">Loading...</div>;
@@ -69,9 +106,18 @@ export default function GardenList() {
             garden={garden}
             onAddPlant={openAddModal}
             onViewPlants={openViewModal}
+            onDelete={openDeleteModal} 
           />
         ))}
       </div>
+
+
+      <DeleteGardenModal 
+        isOpen={isDeleteModalOpen}
+        onClose={closeModals}
+        onConfirm={executeDeleteGarden}
+        gardenName={gardenToDelete?.name ?? null}
+      />
 
       {activeGardenId && currentUser && (
         <>

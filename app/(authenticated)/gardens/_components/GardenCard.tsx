@@ -7,9 +7,11 @@ interface GardenCardProps {
   garden: GardenWithCount;
   onAddPlant: (id: string) => void;
   onViewPlants: (id: string) => void;
+  // Update signature to include name
+  onDelete: (id: string, name: string) => void;
 }
 
-export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps) {
+export function GardenCard({ garden, onAddPlant, onViewPlants, onDelete }: GardenCardProps) {
   const formattedDate = new Date(garden.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -30,7 +32,6 @@ export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps
       </div>
 
       <div className="flex flex-col grow p-4 gap-4">
-        {/* Header */}
         <div>
           <h3 className="text-xl font-semibold text-black">{garden.name}</h3>
           
@@ -40,13 +41,20 @@ export function GardenCard({ garden, onAddPlant, onViewPlants }: GardenCardProps
           </div>
         </div>
 
-        <div className="flex gap-4 mt-auto pt-2">
+        <div className="flex flex-wrap gap-2 mt-auto pt-2">
           <ActionButton onClick={() => onAddPlant(garden.garden_id)}>
             Add Plant
           </ActionButton>
           
           <ActionButton onClick={() => onViewPlants(garden.garden_id)}>
             View Plants
+          </ActionButton>
+
+          <ActionButton 
+            onClick={() => onDelete(garden.garden_id, garden.name)}
+            className="bg-red-500 hover:bg-red-600 border-red-500 text-white ml-auto"
+          >
+            Delete
           </ActionButton>
         </div>
       </div>
