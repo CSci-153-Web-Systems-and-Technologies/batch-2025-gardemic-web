@@ -11,20 +11,61 @@ import GoogleButton from '@/components/GoogleSignInButton';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
+
+type FieldErrors = {
+  email?: string;
+  password?: string;
+};
+
 export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [rememberMe, setRememberMe] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  
+  const [globalError, setGlobalError] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
+  
   const [isLoading, setIsLoading] = React.useState(false);
 
   const router = useRouter();
 
+  const validateForm = (): boolean => {
+    const newErrors: FieldErrors = {};
+    let isValid = true;
+
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+      isValid = false;
+    }
+
+    // Password Validation
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+      isValid = false;
+    }
+
+    setFieldErrors(newErrors);
+    return isValid;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 1. Run Validation before calling Supabase
+    if (!validateForm()) {
+      return;
+    }
+
     const supabase = createClient();
     setIsLoading(true);
-    setError(null);
+    setGlobalError(null);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -34,18 +75,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
       if (error) throw error;
 
       router.refresh();
-      // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/tasks");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setGlobalError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleLogin(e);
   };
 
   return (
@@ -59,11 +94,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
           <p className="text-black text-xl font-montserrat font-medium">Sign in to continue to your account</p>
         </div>
 
-        {/* {error && (
+        {/* Global API Errors */}
+        {globalError && (
           <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200">
-            {error}
+            {globalError}
           </div>
-        )} */}
+        )}
 
         <div className="space-y-4">
           <InputField
@@ -72,9 +108,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
             type="email"
             label="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (fieldErrors.email) setFieldErrors({...fieldErrors, email: undefined});
+            }}
             required
             placeholder="your@email.com"
+            error={fieldErrors.email} 
           />
           
           <InputField
@@ -83,9 +123,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
             type="password"
             label="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (fieldErrors.password) setFieldErrors({...fieldErrors, password: undefined});
+            }}
             required
             placeholder="••••••••"
+            error={fieldErrors.password}
           />
 
           <div className="flex items-center justify-between pt-1">
@@ -112,7 +156,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
 
           <div className="pt-2">
             <Button
-              onClick={handleSubmit}
+              onClick={handleLogin}
               disabled={isLoading}
               className="w-full text-base py-5 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
             >
@@ -135,7 +179,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
         <div className="mt-8 text-center text-sm">
           <span className="text-black">Don`t have an account? </span>
           <a 
-            href="#" 
+            href="/create-account" 
             className="font-semibold text-sage-800 hover:underline"
           >
             Create one here
