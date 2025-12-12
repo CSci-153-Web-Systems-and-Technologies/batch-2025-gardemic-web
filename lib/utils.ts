@@ -3,6 +3,16 @@ import { twMerge } from "tailwind-merge"
 import { JournalEntry, GroupedEntries } from '@/types';
 import { Task } from "@/types";
 
+export type TaskType = 'Watering' | 'Fertilizing' | 'Pruning' | 'Health Checkup' | 'General';
+
+export interface DashboardMetrics {
+  overdue: number;
+  dueToday: number;
+  completed: number;
+  typeDistribution: Record<TaskType, number>;
+}
+
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -32,7 +42,6 @@ export const groupEntriesByMonthYear = (entries: JournalEntry[]): GroupedEntries
 export type TaskStatus = 'Ongoing' | 'Overdue' | 'Completed';
 
 export const getTaskStatus = (task: Task, isMarkedComplete: boolean) => {
-  // 1. Check Local State (Optimistic UI for immediate feedback)
   if (isMarkedComplete) return 'Completed';
 
 
@@ -48,4 +57,42 @@ export const getTaskStatus = (task: Task, isMarkedComplete: boolean) => {
   }
 
   return 'Ongoing';
+}
+
+export function calculateTaskMetrics(tasks: Task[]): DashboardMetrics {
+  // Normalize "Today" to midnight for accurate date comparison
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const todayEnd = todayStart + (24 * 60 * 60 * 1000);
+
+  // Initialize distribution with 0
+  const typeDistribution: Record<TaskType, number> = {
+    'Watering': 0, 'Fertilizing': 0, 'Pruning': 0, 'Health Checkup': 0, 'General': 0
+  };
+
+  let overdue = 0;
+  let dueToday = 0;
+  let completed = 0;
+
+  tasks.forEach((task) => {
+    const type = task.task_type as TaskType;
+    if (typeDistribution.hasOwnProperty(type)) {
+      typeDistribution[type]++;
+    }
+
+    if (task.task_status === 'Completed') {
+      completed++;
+    } else {
+
+      const taskEndDate = new Date(task.end_date).getTime();
+
+      if (taskEndDate < todayStart) {
+        overdue++;
+      } else if (taskEndDate >= todayStart && taskEndDate < todayEnd) {
+        dueToday++;
+      }
+    }
+  });
+
+  return { overdue, dueToday, completed, typeDistribution };
 }
