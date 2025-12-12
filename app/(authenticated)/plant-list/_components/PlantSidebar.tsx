@@ -16,17 +16,15 @@ interface PlantSidebarProps {
 export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps) => {
   const [search, setSearch] = useState('');
 
-
   const filteredPlants = plants.filter((p) => 
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <aside className="w-full md:w-80 bg-white/80 border-r-4 border-[#e0e0d0]  h-full flex flex-col font-montserrat">
+    <aside className="w-full md:w-80 bg-accent-white md:border-r-4 border-black/50 h-full flex flex-col font-montserrat">
       <div className="p-6 pb-2">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Plant List</h2>
         
-        {/* Search Input */}
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input 
@@ -39,8 +37,8 @@ export const PlantSidebar = ({ plants, selectedId, onSelect }: PlantSidebarProps
         </div>
       </div>
 
-      {/* Scrollable List */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
+      {/* Scrollable List - Added padding bottom for mobile nav clearance */}
+      <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
         {filteredPlants.map((plant) => {
           const isSelected = selectedId === plant.plant_id;
           return (
