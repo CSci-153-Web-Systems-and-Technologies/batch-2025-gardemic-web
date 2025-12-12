@@ -88,10 +88,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
       className={`min-h-screen flex items-center justify-center bg-accent-white p-4 ${className || ''}`} 
       {...props}
     >
-      <div className="w-full max-w-md px-4">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-aclonica text-5xl font-bold text-black mb-2">Welcome Back!</h1>
-          <p className="text-black text-xl font-montserrat font-medium">Sign in to continue to your account</p>
+          {/* Made font size responsive: 3xl on mobile, 5xl on desktop to match image */}
+          <h1 className="font-aclonica text-3xl md:text-5xl font-bold text-black mb-2">
+            Welcome Back!
+          </h1>
+          <p className="text-black text-lg md:text-xl font-montserrat font-medium">
+            Sign in to continue to your account
+          </p>
         </div>
 
         {/* Global API Errors */}
