@@ -25,7 +25,7 @@ export function ViewPlantsModal({ gardenId, isOpen, onClose }: ViewPlantsModalPr
       const { data, error } = await supabase
         .from("garden_plants")
         .select(`
-          id,
+          list_id,
           added_at,
           plant:plants (
             plant_id,
@@ -47,7 +47,7 @@ export function ViewPlantsModal({ gardenId, isOpen, onClose }: ViewPlantsModalPr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 font-montserrat">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh]">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
@@ -66,7 +66,7 @@ export function ViewPlantsModal({ gardenId, isOpen, onClose }: ViewPlantsModalPr
           ) : (
             <ul className="space-y-3">
               {plants.map((item) => (
-                <li key={item.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-md border">
+                <li key={item.list_id} className="flex justify-between items-center bg-gray-50 p-3 rounded-md border">
                   <div>
                     <p className="font-medium text-gray-900">{item.plant.name}</p>
                     <p className="text-sm text-gray-500">Growth: {item.plant.growth}</p>
