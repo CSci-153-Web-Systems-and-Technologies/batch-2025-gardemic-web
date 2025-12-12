@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { ActionButton } from "./ActionButton";
+import { notificationService } from "@/services/notificationService";
 
 interface AddGardenModalProps {
   isOpen: boolean;
@@ -35,6 +36,20 @@ export function AddGardenModal({ isOpen, onClose, onGardenAdded }: AddGardenModa
         });
 
       if (insertError) throw insertError;
+
+      try {
+        const userName = user.user_metadata?.full_name || "User";
+        
+        await notificationService.create({
+            userId: user.id,
+            username: userName,
+            type: 'Garden Creation',
+            actionDetails: `created a garden, ${name}`,
+            additionalInfo: description || `A new space for your plants named ${name}.`
+        });
+      } catch (notifyError) {
+        console.error("Notification failed:", notifyError);
+      }
 
       setName("");
       setDescription("");

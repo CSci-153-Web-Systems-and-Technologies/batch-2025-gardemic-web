@@ -6,6 +6,7 @@ import { InputField } from '@/components/InputField';
 import { SelectField } from '../../_components/SelectField';
 import { Task } from '@/types';
 import { createClient } from '@/utils/supabase/client';
+import { notificationService } from '@/services/notificationService';
 
 interface CreateTaskFormProps {
   onSuccess: (newTask: Task) => void;
@@ -150,7 +151,21 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         .single();
 
       if (error) throw error;
-      if (data) onSuccess(data as Task);
+      if (data) 
+      {
+        const { data: { user } } = await supabase.auth.getUser();
+        const username = user?.user_metadata?.full_name || "User";
+
+        await notificationService.create({
+          userId: userId,
+          username: username,
+          type: 'Task Creation',
+          actionDetails: `created a task, ${formData.task_type}`,
+          additionalInfo: `Task for ${formData.task_type} is scheduled from ${formData.start_date} to ${formData.end_date}`
+        });
+
+        onSuccess(data as Task);
+      }
 
     } catch (error) {
       console.error('Error creating task:', error);
