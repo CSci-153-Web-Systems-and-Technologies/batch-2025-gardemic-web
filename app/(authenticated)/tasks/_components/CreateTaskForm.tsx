@@ -22,17 +22,17 @@ interface FormErrors {
 }
 
 export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCancel }) => {
-  const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  
+  const supabase = createClient();
   const today = format(new Date(), 'yyyy-MM-dd');
 
+  // State
+  const [loading, setLoading] = useState(false);
+  const [fetchingPlants, setFetchingPlants] = useState(false); 
+  const [userId, setUserId] = useState<string | null>(null);
   const [availablePlants, setAvailablePlants] = useState<{label: string, value: string}[]>([]);
   const [availableGardens, setAvailableGardens] = useState<{label: string, value: string}[]>([]);
-  
-
   const [errors, setErrors] = useState<FormErrors>({});
-
+  
   const [formData, setFormData] = useState({
     garden_id: '',
     plant_id: '', 
@@ -42,14 +42,12 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
     end_date: '', 
   });
 
-  const supabase = createClient();
-
+  // 1. Initial Load: Get User and Gardens only
   useEffect(() => {
     let isMounted = true;
 
     const initData = async () => {
       try {
-        const plantsPromise = supabase.from('plants').select('plant_id, name');
         const { data: { user }, error: authError } = await supabase.auth.getUser();
 
         if (authError || !user) {
@@ -58,30 +56,16 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         }
         if (isMounted) setUserId(user.id);
 
-        const gardensPromise = supabase
+        const { data: gardensData } = await supabase
           .from('gardens')
           .select('garden_id, name')
           .eq('user_id', user.id);
 
-        const [plantsResult, gardensResult] = await Promise.all([
-          plantsPromise,
-          gardensPromise
-        ]);
-
-        if (isMounted) {
-          if (plantsResult.data) {
-            setAvailablePlants(plantsResult.data.map((p: any) => ({
-              label: p.name,
-              value: p.plant_id
-            })));
-          }
-
-          if (gardensResult.data) {
-            setAvailableGardens(gardensResult.data.map((g: any) => ({
-              label: g.name,
-              value: g.garden_id
-            })));
-          }
+        if (isMounted && gardensData) {
+          setAvailableGardens(gardensData.map((g: any) => ({
+            label: g.name,
+            value: g.garden_id
+          })));
         }
       } catch (error) {
         console.error('Error loading form data:', error);
@@ -93,30 +77,55 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
     return () => { isMounted = false; };
   }, [supabase]);
 
+  // 2. Reactive Load: Fetch Plants when Garden changes
+  useEffect(() => {
+    if (!formData.garden_id) {
+        setAvailablePlants([]);
+        return;
+    }
+
+    const fetchGardenPlants = async () => {
+        setFetchingPlants(true);
+        try {
+            const { data, error } = await supabase
+                .from('garden_plants')
+                .select(`
+                    plant_id,
+                    plant:plants ( name )
+                `)
+                .eq('garden_id', formData.garden_id);
+
+            if (error) throw error;
+
+            if (data) {
+                const formattedPlants = data.map((item: any) => ({
+                    label: item.plant?.name || "Unknown Plant",
+                    value: item.plant_id
+                }));
+                setAvailablePlants(formattedPlants);
+            }
+        } catch (error) {
+            console.error("Error fetching garden plants:", error);
+            setAvailablePlants([]);
+        } finally {
+            setFetchingPlants(false);
+        }
+    };
+
+    fetchGardenPlants();
+
+  }, [formData.garden_id, supabase]);
+
+
   const validateForm = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    if (!formData.garden_id) {
-      newErrors.garden_id = "Please select a garden";
-      isValid = false;
-    }
-    if (!formData.plant_id) {
-      newErrors.plant_id = "Please select a plant";
-      isValid = false;
-    }
-    if (!formData.task_type) {
-      newErrors.task_type = "Please select a task type";
-      isValid = false;
-    }
-    if (!formData.start_date) {
-      newErrors.start_date = "Start date is required";
-      isValid = false;
-    }
-    if (!formData.end_date) {
-      newErrors.end_date = "End date is required";
-      isValid = false;
-    }
+    if (!formData.garden_id) { newErrors.garden_id = "Please select a garden"; isValid = false; }
+    if (!formData.plant_id) { newErrors.plant_id = "Please select a plant"; isValid = false; }
+    if (!formData.task_type) { newErrors.task_type = "Please select a task type"; isValid = false; }
+    if (!formData.start_date) { newErrors.start_date = "Start date is required"; isValid = false; }
+    if (!formData.end_date) { newErrors.end_date = "End date is required"; isValid = false; }
 
     setErrors(newErrors);
     return isValid;
@@ -124,13 +133,9 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-
-    if (!validateForm()) {
-        return; 
-    }
-
+    if (!validateForm()) return; 
     if (!userId) return;
+    
     setLoading(true);
 
     try {
@@ -151,8 +156,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         .single();
 
       if (error) throw error;
-      if (data) 
-      {
+      if (data) {
         const { data: { user } } = await supabase.auth.getUser();
         const username = user?.user_metadata?.full_name || "User";
 
@@ -166,7 +170,6 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
 
         onSuccess(data as Task);
       }
-
     } catch (error) {
       console.error('Error creating task:', error);
       alert('Failed to create task');
@@ -178,7 +181,12 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+        if (name === 'garden_id') {
+            return { ...prev, garden_id: value, plant_id: '' };
+        }
+        return { ...prev, [name]: value };
+    });
 
     if (errors[name as keyof FormErrors]) {
         setErrors(prev => ({ ...prev, [name]: undefined }));
@@ -205,15 +213,21 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ onSuccess, onCan
         error={errors.garden_id} 
       />
       
-      <SelectField
-        label="Plant"
-        name="plant_id"
-        value={formData.plant_id}
-        onChange={handleChange}
-        options={availablePlants} 
-        required
-        error={errors.plant_id} 
-      />
+      <div className="relative">
+        <SelectField
+            label={fetchingPlants ? "Loading Plants..." : "Plant"}
+            name="plant_id"
+            value={formData.plant_id}
+            onChange={handleChange}
+            options={availablePlants} 
+            required
+            error={errors.plant_id}
+            disabled={!formData.garden_id || fetchingPlants} 
+        />
+        {!formData.garden_id && (
+            <p className="text-xs text-gray-500 mt-1 absolute right-0 top-0">Select a garden first</p>
+        )}
+      </div>
 
       <SelectField
         label="Task Type"
