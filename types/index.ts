@@ -1,19 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 
-export interface InputFieldProps {
-  label: string;
-  id?: string;
-  name?: string;
-  type?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  disabled?: boolean;
-  className?: string;
-  error?: string;
-}
 
 export interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {}
 
@@ -86,6 +73,19 @@ export interface GardenPlant {
   plant_id: string;
   user_id: string;
   added_at: string;
+}
+
+export interface Task {
+  task_id: string;
+  user_id: string;
+  garden_id: string;
+  plant_id: string | null;
+  task_type: string;
+  task_status: string;
+  description: string | null;
+  start_date: string;
+  end_date: string;
+  created_at: string;
 }
 
 export interface JournalEntry {
