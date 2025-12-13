@@ -214,7 +214,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
           </div>
         </div>
 
-        <GoogleButton />
+        <GoogleButton nextRoute='/tasks'/>
 
         <div className="mt-8 text-center text-sm">
           <span className="text-black">Don`t have an account? </span>

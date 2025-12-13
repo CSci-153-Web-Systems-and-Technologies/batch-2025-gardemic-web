@@ -68,7 +68,6 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
     try {
       const supabase = createClient();
       
-
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -203,7 +202,7 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
             </div>
           </div>
 
-          <GoogleButton />
+          <GoogleButton nextRoute='/update-password'/>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-black">Have an account? </span>
