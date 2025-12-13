@@ -68,7 +68,6 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
     try {
       const supabase = createClient();
       
-
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -188,9 +187,9 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
 
             <div className="text-center text-xs text-gray-600 pt-1">
               By creating an account, you agree to Gardemic`s{" "}
-              <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>
+              <a href="/privacy-policy" className="underline hover:text-gray-800">Privacy Policy</a>
               {" "}&{" "}
-              <a href="#" className="underline hover:text-gray-800">Terms of Use</a>
+              <a href="/terms" className="underline hover:text-gray-800">Terms of Use</a>
             </div>
           </div>
 
@@ -203,7 +202,7 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
             </div>
           </div>
 
-          <GoogleButton />
+          <GoogleButton nextRoute='/update-password'/>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-black">Have an account? </span>
