@@ -11,7 +11,6 @@ import GoogleButton from '@/components/GoogleSignInButton';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
-
 type FieldErrors = {
   email?: string;
   password?: string;
@@ -23,6 +22,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
   const [rememberMe, setRememberMe] = React.useState(false);
   
   const [globalError, setGlobalError] = React.useState<string | null>(null);
+  const [globalSuccess, setGlobalSuccess] = React.useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
   
   const [isLoading, setIsLoading] = React.useState(false);
@@ -32,7 +32,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
   const validateForm = (): boolean => {
     const newErrors: FieldErrors = {};
     let isValid = true;
-
 
     if (!email.trim()) {
       newErrors.email = "Email is required";
@@ -58,7 +57,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 1. Run Validation before calling Supabase
     if (!validateForm()) {
       return;
     }
@@ -66,6 +64,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
     const supabase = createClient();
     setIsLoading(true);
     setGlobalError(null);
+    setGlobalSuccess(null);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -83,6 +82,35 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
     }
   };
 
+  const handleForgotPassword = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setGlobalError(null);
+    setGlobalSuccess(null);
+
+    // We only need the email for this
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFieldErrors({ email: "Please enter your email first to reset password" });
+      return;
+    }
+
+    setIsLoading(true);
+    const supabase = createClient();
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/update-password`
+      });
+
+      if (error) throw error;
+
+      setGlobalSuccess("Password reset link sent! Check your ");
+    } catch (error: unknown) {
+      setGlobalError(error instanceof Error ? error.message : "Failed to send reset email");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div 
       className={`min-h-screen flex items-center justify-center bg-accent-white p-4 ${className || ''}`} 
@@ -90,7 +118,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
     >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          {/* Made font size responsive: 3xl on mobile, 5xl on desktop to match image */}
           <h1 className="font-aclonica text-3xl md:text-5xl font-bold text-black mb-2">
             Welcome Back!
           </h1>
@@ -99,10 +126,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
           </p>
         </div>
 
-        {/* Global API Errors */}
         {globalError && (
           <div className="mb-4 p-3 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200">
             {globalError}
+          </div>
+        )}
+
+
+        {globalSuccess && (
+          <div className="mb-4 p-3 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
+            {globalSuccess}<a href='https://mail.google.com' className='underline font-extrabold'>email.</a>
           </div>
         )}
 
@@ -151,12 +184,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
                 Remember me
               </Label>
             </div>
-            <a 
-              href="#" 
-              className="text-sm font-semibold text-sage-800 hover:underline"
+            
+            <button 
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-sm font-semibold text-sage-800 hover:underline bg-transparent border-none cursor-pointer"
             >
               Forgot password?
-            </a>
+            </button>
           </div>
 
           <div className="pt-2">
@@ -165,7 +200,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
               disabled={isLoading}
               className="w-full text-base py-5 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Loading..." : "Sign In"}
             </Button>
           </div>
         </div>
