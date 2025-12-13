@@ -187,9 +187,9 @@ export const CreateAccountForm: React.FC<CreateAccountFormProps> = ({ className,
 
             <div className="text-center text-xs text-gray-600 pt-1">
               By creating an account, you agree to Gardemic`s{" "}
-              <a href="#" className="underline hover:text-gray-800">Privacy Policy</a>
+              <a href="/privacy-policy" className="underline hover:text-gray-800">Privacy Policy</a>
               {" "}&{" "}
-              <a href="#" className="underline hover:text-gray-800">Terms of Use</a>
+              <a href="/terms" className="underline hover:text-gray-800">Terms of Use</a>
             </div>
           </div>
 
