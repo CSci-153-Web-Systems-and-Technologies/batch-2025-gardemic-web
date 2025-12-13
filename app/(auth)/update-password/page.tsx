@@ -56,14 +56,14 @@ export default function UpdatePassword() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-accent-white py-10 px-4 md:px-6">
       <div className="w-full max-w-xl">
-        <div className="text-center my-8">
-          <h1 className="font-aclonica text-2xl md:text-4xl font-bold text-black mb-2">
-            Reset Your Password
-          </h1>
-          <p className="text-gray-600 font-montserrat">
-            Enter your new password below.
-          </p>
-        </div>
+            <div className="text-center my-8">
+            <h1 className="font-aclonica text-2xl md:text-4xl font-bold text-black mb-2">
+                Set Your Password
+            </h1>
+            <p className="text-gray-600 font-montserrat">
+                Create a password to secure your account.
+            </p>
+            </div>
 
         <div className="rounded-lg bg-accent-white">
           {error && (
