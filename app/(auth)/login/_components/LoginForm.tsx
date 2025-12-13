@@ -205,6 +205,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ className, ...props }) => 
           </div>
         </div>
 
+        <div className="text-center text-xs text-gray-600 pt-1 mt-4">
+          By logging in, you agree to Gardemic`s{" "}
+            <a href="/privacy-policy" className="underline font-bold hover:text-primary-green">Privacy Policy</a>
+            {" "}&{" "}
+            <a href="/terms" className="underline font-bold hover:text-primary-green">Terms of Use</a>
+        </div>
+
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-gray-800/20"></span>
